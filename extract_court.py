@@ -22,6 +22,7 @@ from lib.utils import init_court_capture
             
 #             cv2.imshow('court', court)
 
+print('Initiating court extractor...')
 arg_parse = argparse.ArgumentParser()
 arg_parse.add_argument('--type', required=True, help='Input type ("video" or "picture")')
 arg_parse.add_argument('--input', required=True, help='Image/video input path')
@@ -31,14 +32,17 @@ args = vars(arg_parse.parse_args())
 
 img = None
 src_pts = []
+non_video_type = ['picture', 'image']
 
 if args['type'].lower() == 'video':
+    print('[INFO] Creating a court from a video source...')
     img = init_court_capture(args['input'], float(args['scaling']))
-elif args['type'].lower() == 'picture':
+elif args['type'].lower() in non_video_type:
+    print('[INFO] Creating a court from a picture/image source...')
     img = cv2.imread(args['input'])
     
 img_copy = img.copy()
-    
+
 cv2.imshow('court', img_copy)
 # cv2.setMouseCallback('court', left_click_event)
 cv2.waitKey(0)
@@ -47,4 +51,5 @@ cv2.destroyAllWindows()
 # print('Court points:')
 # print(src_pts)
 
-# cv2.imwrite(args['output'], img)
+print('[INFO] Saving court as:', args['output'])
+cv2.imwrite(args['output'], img)
