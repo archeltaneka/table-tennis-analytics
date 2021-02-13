@@ -81,7 +81,7 @@ def drawPlayersOnCourt(im, coord, color, radius=10):
         
     return im
 
-def generate_heatmap(court_path, coords, player, video_duration, bins=25):
+def generate_heatmap(court_path, coords, player, video_duration, bins=25, save_path):
     
     pixel_to_meter = 0.0002645833
     diff = [(x1[0]-x0[0], x1[1]-x0[1]) for x0,x1 in zip(coords[0::], coords[1::])]
@@ -108,3 +108,6 @@ def generate_heatmap(court_path, coords, player, video_duration, bins=25):
     plt.annotate('Court Coverage: {}m\n'.format(travel_distance), (.19,.1), xycoords='figure fraction')
     plt.annotate('Speed: {}km/h'.format(speed), (.19,.1), xycoords='figure fraction')
     plt.show()
+    
+    if save_path:
+        plt.savefig(save_path)

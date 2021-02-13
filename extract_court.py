@@ -53,3 +53,6 @@ cv2.destroyAllWindows()
 
 print('[INFO] Saving court as:', args['output'])
 cv2.imwrite(args['output'], img)
+print('[STATUS] Court image has been successfully saved')
+
+print('Exiting...')
