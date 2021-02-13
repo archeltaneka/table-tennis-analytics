@@ -26,17 +26,17 @@ print('Initiating court extractor...')
 arg_parse = argparse.ArgumentParser()
 arg_parse.add_argument('--type', required=True, help='Input type ("video" or "picture")')
 arg_parse.add_argument('--input', required=True, help='Image/video input path')
-arg_parse.add_argument('--scaling', required=True, help='Scaling factor')
 arg_parse.add_argument('--output', required=True, help='Save path')
 args = vars(arg_parse.parse_args())
 
+scaling_factor = 0.5
 img = None
 src_pts = []
 non_video_type = ['picture', 'image']
 
 if args['type'].lower() == 'video':
     print('[INFO] Creating a court from a video source...')
-    img = init_court_capture(args['input'], float(args['scaling']))
+    img = init_court_capture(args['input'], scaling_factor)
 elif args['type'].lower() in non_video_type:
     print('[INFO] Creating a court from a picture/image source...')
     img = cv2.imread(args['input'])
