@@ -4,6 +4,17 @@ import matplotlib.pyplot as plt
 
 def init_court_capture(file_path, scaling_factor):
     
+    """
+    Captures court image in a video file
+    
+    Arguments:
+        file_path: String - Absolute path to the video file
+        scaling_factor: Float - Scales up/down the resulting image
+        
+    Outputs:
+        img: numpy.ndarray - Captured court image
+    """
+    
     cap = cv2.VideoCapture(file_path)
     ret, frame = cap.read()
     
@@ -14,6 +25,19 @@ def init_court_capture(file_path, scaling_factor):
     return img
 
 def drawPlayers(im, pred_boxes, pred_classes, showResult=False):
+    
+    """
+    Draws circles on the detected players
+    
+    Arguments:
+        im: numpy.ndarray - Captured court image
+        pred_boxes: List - Players' bounding boxes
+        pred_classes: List - List of labels (we only use "Person" in this case)
+        showResult: Boolean - Show the circles plotted on the image
+        
+    Outputs:
+        None
+    """
     
     # box config
     color = [255, 0, 0]
@@ -50,7 +74,19 @@ def drawPlayers(im, pred_boxes, pred_classes, showResult=False):
 #         cv2.destroyAllWindows()
 
 def homographyTransform(img_src, img_dst, showResult=False):
-
+    
+    """
+    Performs homography transformation between a captured frame of a table tennis game and a table tennis court
+    
+    Arguments:
+        img_src: numpy.ndarray - Captured frame of a table tennis game
+        img_dst: numpy.ndarray - Court image
+        showResult: Boolean - Show the circles plotted on the image
+        
+    Outputs:
+        img_out: numpy.ndarray - The transformed image
+    """
+    
     # Calculate Homography
     h, status = cv2.findHomography(src_pts, dst_pts)
     img_out = cv2.warpPerspective(img_src, h, (img_dst.shape[1], img_dst.shape[0]))
@@ -65,6 +101,18 @@ def homographyTransform(img_src, img_dst, showResult=False):
     return img_out
 
 def getPlayersMask(im):
+    
+    """
+    Performs player masking to focus only on the players and ignores everything else
+    
+    Arguments:
+        im: numpy.ndarray - The resulted image from homography transformation
+    
+    Outputs:
+        numpy.ndarray - The result of masked image
+        
+    """
+    
     lower_range = np.array([255,0,0])                         # Set the Lower range value of blue in BGR
     upper_range = np.array([255,155,155])                     # Set the Upper range value of blue in BGR
     mask = cv2.inRange(im, lower_range, upper_range)          # Create a mask with range
@@ -74,6 +122,20 @@ def getPlayersMask(im):
     return cv2.inRange(result, lower_range, upper_range) 
 
 def drawPlayersOnCourt(im, coord, color, radius=10):
+    
+    """
+    Draw circles on players in the original court image
+    
+    Arguments:
+        im: numpy.ndarray - Court image
+        coord: numpy.ndarray - Circle coordinates (X,Y)
+        color: List - RGB color values
+        radius: Integer - Circle radius
+        
+    Outputs:
+        im: numpy.ndarray - The resulted image after adding circles
+    """
+    
     # draw a circle on players' positions according to their coordinates
     for player_pos in coord:
         center = (player_pos[0], player_pos[1])
@@ -82,6 +144,21 @@ def drawPlayersOnCourt(im, coord, color, radius=10):
     return im
 
 def generate_heatmap(court_path, coords, player, video_duration, bins=25, save_path):
+    
+    """
+    Plot heatmap figure according to players' coordinates
+    
+    Arguments:
+        court_path: String - Path to the court image
+        coords: numpy.ndarray - Player coordinates
+        player: String - Player name
+        video_duration: Float - Video duration
+        bins: Integer: Number of bins to show
+        save_path: String - Path to save the heatmap figure
+        
+    Outputs:
+        None
+    """
     
     pixel_to_meter = 0.0002645833
     diff = [(x1[0]-x0[0], x1[1]-x0[1]) for x0,x1 in zip(coords[0::], coords[1::])]
